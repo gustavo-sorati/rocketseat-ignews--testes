@@ -26,10 +26,7 @@ export default function Home({product}: HomeProps) {
           <h1>News about the <span>React</span> world.</h1>
           <p>
             Get access to all the publications <br />
-            <span>for {new Intl.NumberFormat('en-US', {
-              style: 'currency',
-              currency: 'USD'
-            }).format(product.amount)} month</span>
+            <span>for {product.amount} month</span>
           </p>
           <SubscribeButton priceId={product.priceId}/>
         </section>
@@ -63,9 +60,15 @@ export default function Home({product}: HomeProps) {
 
 // SSG
 export const getStaticProps: GetStaticProps = async () => {
+    // const test = await stripe.prices.list({
+    //   limit: 3,
+    // })
+
+    
     const price = await stripe.prices.retrieve('price_1J0bACKKZhmsP0BkyDitfyog', {
-      expand: ['product'] // tem acesso a todas informações do produto
+      expand: ['product'] // tem acesso além do price aos subfilhos do objeto product todas informações do produto
     });
+    
 
     const product = {
       priceId: price.id,
@@ -74,6 +77,8 @@ export const getStaticProps: GetStaticProps = async () => {
         currency: 'USD'
       }).format(price.unit_amount / 100)
     }
+
+    console.log(product);
 
     return {
       props: {
